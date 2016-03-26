@@ -137,7 +137,15 @@
 
 				if(camera.position.z < currentz*-50 + 400)
 				{
-					makeCube(0,-150,currentz*-50)
+					// makeCube(0,-150,currentz*-50,0x99ff33)
+					for(var i = 0; i < 20; i++)
+					{
+						if(i == 10 || i == 11)
+						{
+							makeCube(i*20,-150,currentz*-50,0xffdf80)
+						}
+						makeCube(i*20,-150,currentz*-50,0x99ff33)
+					}
 					currentz ++;
 				}
 
@@ -149,20 +157,20 @@
 				effect.render( scene, camera );
 			}
 
-			function makeCube(x,y,z)
+			function makeCube(x,y,z,hex)
 			{
 				var geometry = new THREE.BoxGeometry( 50, 50, 50 );
 					for ( var i = 0; i < geometry.faces.length; i += 2 )
 					{
-						var hex = Math.random() * 0xffffff;
+						// var hex = Math.random() * 0xffffff;
 						geometry.faces[ i ].color.setHex( hex );
 						geometry.faces[ i + 1 ].color.setHex( hex );
 					}
 					var material = new THREE.MeshBasicMaterial( { vertexColors: THREE.FaceColors, overdraw: 0.5 } );
 					cube = new THREE.Mesh( geometry, material );
-					cube.position.x = 150;
-					cube.position.y = -150;
-					cube.position.z = currentz*-50;
+					cube.position.x = x;
+					cube.position.y = y;
+					cube.position.z = z;
 					scene.add( cube );
 					cubes.push(cube);
 			}
