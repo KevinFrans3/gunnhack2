@@ -42,11 +42,17 @@
 
 		<script>
 
+		var globaldelta = 0;
+
 			var camera, scene, renderer;
 			var realcamera;
 			var guiVisible = true;
 
 			var mesh, effect, controls, oculuscontrol;
+
+			var cubes = [];
+
+			var currentz = 0;
 
 			var meshes = [];
 			var meshparent = [];
@@ -100,11 +106,7 @@
 					geometry.faces[ i + 1 ].color.setHex( hex );
 				}
 				var material = new THREE.MeshBasicMaterial( { vertexColors: THREE.FaceColors, overdraw: 0.5 } );
-				cube = new THREE.Mesh( geometry, material );
-				cube.position.x = 150;
-				cube.position.y = 150;
-				cube.position.z = 150;
-				scene.add( cube );
+
 
 
 
@@ -135,12 +137,19 @@
 
 				var t = clock.getElapsedTime();
 
-				for (var i=0; i<meshes.length; i++) {
-					var c = Math.floor(i % cols);
-					var r = Math.floor(i / cols);
-					meshparent2[i].rotation.y = (c * 3.142 * 2 / cols);
-					meshparent[i].rotation.x = ((r+10) * 3.142 * 2 / (rows+20));
-					meshes[i].position.z = 500;
+				camera.position.z += globaldelta / -100;
+
+				globaldelta = 0;
+
+				if(camera.position.z < currentz*200 + 400)
+				{
+					cube = new THREE.Mesh( geometry, material );
+					cube.position.x = 150;
+					cube.position.y = 150;
+					cube.position.z = currentz*200 + 400;
+					scene.add( cube );
+					cubes.push(cube);
+					currentz ++;
 				}
 
 				// controls.update( clock.getDelta() );
@@ -148,6 +157,24 @@
 
 				effect.render( scene, camera );
 			}
+
+
+
+			function displaywheel(e)
+			{
+			    var evt=window.event || e //equalize event object
+			    globaldelta=evt.detail? evt.detail*(-120) : evt.wheelDelta //check for detail first so Opera uses that instead of wheelDelta
+
+			    console.log(globaldelta)
+
+			}
+
+			var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel" //FF doesn't recognize mousewheel as of FF3.x
+
+			if (document.attachEvent) //if IE (and Opera depending on user setting)
+			    document.attachEvent("on"+mousewheelevt, displaywheel)
+			else if (document.addEventListener) //WC3 browsers
+			    document.addEventListener(mousewheelevt, displaywheel, false)
 
 		</script>
 
